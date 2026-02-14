@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Star Trek Character Eliminator</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #0b0f1a;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+h1 {
+  margin-bottom: 10px;
+}
+#battle {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 30px;
+}
+.character {
+  cursor: pointer;
+  background: #1c2233;
+  padding: 20px;
+  border-radius: 12px;
+  width: 200px;
+  transition: 0.2s ease;
+}
+.character:hover {
+  background: #2d3755;
+}
+button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+#result {
+  margin-top: 40px;
+  font-size: 24px;
+  display: none;
+}
+</style>
+</head>
+<body>
+
+<h1>Star Trek Character Eliminator</h1>
+<p>Choose your favourite each round.</p>
+
+<div id="battle"></div>
+
+<div id="result"></div>
+
+<script>
+const characters = [
+  "Seven of Nine",
+  "Jadzia Dax",
+  "Deanna Troi",
+  "T'Pol",
+  "Uhura",
+  "Kira Nerys",
+  "Beverly Crusher",
+  "B'Elanna Torres",
+  "Hoshi Sato",
+  "Ro Laren"
+];
+
+let currentRound = [];
+let nextRound = [];
+let index = 0;
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function start() {
+  currentRound = shuffle([...characters]);
+  nextRound = [];
+  index = 0;
+  showBattle();
+}
+
+function showBattle() {
+  const battle = document.getElementById("battle");
+  battle.innerHTML = "";
+
+  if (index >= currentRound.length - 1) {
+    if (nextRound.length === 1) {
+      showResult();
+      return;
+    }
+    currentRound = nextRound;
+    nextRound = [];
+    index = 0;
+  }
+
+  const char1 = currentRound[index];
+  const char2 = currentRound[index + 1];
+
+  [char1, char2].forEach(name => {
+    const div = document.createElement("div");
+    div.className = "character";
+    div.innerHTML = `<button onclick="choose('${name}')">${name}</button>`;
+    battle.appendChild(div);
+  });
+}
+
+function choose(name) {
+  nextRound.push(name);
+  index += 2;
+  showBattle();
+}
+
+function showResult() {
+  document.getElementById("battle").style.display = "none";
+  const result = document.getElementById("result");
+  result.style.display = "block";
+  result.innerHTML = `
+    <p>The ultimate result is...</p>
+    <h2>Ensign Harry Kim</h2>
+    <p>Awww friend! Star Trek friend! Awww friend!</p>
+  `;
+}
+
+start();
+</script>
+
+</body>
+</html>
