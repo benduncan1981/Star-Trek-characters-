@@ -2,57 +2,142 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Star Trek Character Eliminator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>LCARS Compatibility Matrix</title>
+
 <style>
+:root {
+  --lcars-orange: #ff9c00;
+  --lcars-peach: #ffcc99;
+  --lcars-pink: #ff6699;
+  --lcars-purple: #cc99ff;
+  --lcars-bg: #000000;
+  --lcars-panel: #111111;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background: #0b0f1a;
-  color: white;
-  text-align: center;
-  padding: 20px;
-}
-h1 {
-  margin-bottom: 10px;
-}
-#battle {
+  margin: 0;
+  background: var(--lcars-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: var(--lcars-peach);
   display: flex;
   justify-content: center;
-  gap: 40px;
-  margin-top: 30px;
+  align-items: center;
+  min-height: 100vh;
 }
-.character {
-  cursor: pointer;
-  background: #1c2233;
+
+.console {
+  width: 100%;
+  max-width: 700px;
   padding: 20px;
-  border-radius: 12px;
-  width: 200px;
-  transition: 0.2s ease;
 }
-.character:hover {
-  background: #2d3755;
+
+.header {
+  background: var(--lcars-orange);
+  color: black;
+  padding: 12px 20px;
+  font-weight: bold;
+  font-size: 18px;
+  border-radius: 30px 30px 0 0;
 }
-button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 16px;
+
+.subheader {
+  background: var(--lcars-purple);
+  padding: 8px 20px;
+  font-size: 14px;
+}
+
+.panel {
+  background: var(--lcars-panel);
+  padding: 30px 20px;
+  border-radius: 0 0 30px 30px;
+  text-align: center;
+}
+
+.battle {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 600px) {
+  .battle {
+    flex-direction: row;
+  }
+}
+
+.choice {
+  flex: 1;
+  background: var(--lcars-pink);
+  color: black;
+  padding: 20px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
   cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.2s ease;
 }
-#result {
-  margin-top: 40px;
-  font-size: 24px;
+
+.choice:active {
+  transform: scale(0.97);
+}
+
+.hidden {
   display: none;
+}
+
+.status {
+  margin-top: 25px;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.result-title {
+  font-size: 22px;
+  margin-top: 20px;
+}
+
+.result-main {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 15px 0;
+  color: var(--lcars-orange);
+}
+
+.footer-bar {
+  margin-top: 20px;
+  height: 12px;
+  background: var(--lcars-orange);
+  border-radius: 20px;
 }
 </style>
 </head>
+
 <body>
 
-<h1>Star Trek Character Eliminator</h1>
-<p>Choose your favourite each round.</p>
+<div class="console">
+  <div class="header">LCARS COMPATIBILITY MATRIX</div>
+  <div class="subheader">STARFLEET PERSONALITY ANALYSIS SUBROUTINE</div>
+  <div class="panel">
 
-<div id="battle"></div>
+    <div id="battle" class="battle"></div>
 
-<div id="result"></div>
+    <div id="status" class="status">Select preferred candidate.</div>
+
+    <div id="result" class="hidden">
+      <div class="result-title">FINAL ANALYSIS COMPLETE</div>
+      <div class="result-main">ENSIGN HARRY KIM</div>
+      <div>Awww friend! Star Trek friend! Awww friend!</div>
+    </div>
+
+    <div class="footer-bar"></div>
+  </div>
+</div>
 
 <script>
 const characters = [
@@ -88,8 +173,8 @@ function showBattle() {
   battle.innerHTML = "";
 
   if (index >= currentRound.length - 1) {
-    if (nextRound.length === 1) {
-      showResult();
+    if (nextRound.length <= 1) {
+      fakeAnalysis();
       return;
     }
     currentRound = nextRound;
@@ -102,8 +187,9 @@ function showBattle() {
 
   [char1, char2].forEach(name => {
     const div = document.createElement("div");
-    div.className = "character";
-    div.innerHTML = `<button onclick="choose('${name}')">${name}</button>`;
+    div.className = "choice";
+    div.textContent = name;
+    div.onclick = () => choose(name);
     battle.appendChild(div);
   });
 }
@@ -114,15 +200,19 @@ function choose(name) {
   showBattle();
 }
 
-function showResult() {
-  document.getElementById("battle").style.display = "none";
-  const result = document.getElementById("result");
-  result.style.display = "block";
-  result.innerHTML = `
-    <p>The character you fancy the most is...</p>
-    <h2>Ensign Harry Kim</h2>
-    <p>Awww friend! Star Trek friend! Awww friend!</p>
-  `;
+function fakeAnalysis() {
+  document.getElementById("battle").classList.add("hidden");
+  const status = document.getElementById("status");
+  status.textContent = "ANALYSING RESPONSES...";
+  
+  setTimeout(() => {
+    status.textContent = "FORMULATING OUTCOME...";
+  }, 2000);
+
+  setTimeout(() => {
+    status.classList.add("hidden");
+    document.getElementById("result").classList.remove("hidden");
+  }, 4000);
 }
 
 start();
